@@ -88,9 +88,6 @@ def edit_aime_card(parent, aime_path, current_file):
         layout.addWidget(info_label)
 
         edit = QLineEdit(content)
-        edit.setPlaceholderText(
-            Localization.get_text(parent.language, "edit_aime_placeholder")
-        )
         layout.addWidget(edit)
 
         button_layout = QHBoxLayout()
