@@ -88,9 +88,6 @@ def edit_aime_card(parent, aime_path, current_file):
         layout.addWidget(info_label)
 
         edit = QLineEdit(content)
-        edit.setPlaceholderText(
-            Localization.get_text(parent.language, "edit_aime_placeholder")
-        )
         layout.addWidget(edit)
 
         button_layout = QHBoxLayout()
@@ -191,8 +188,8 @@ class KeycodeEdit(QLineEdit):
         super().__init__(parent)
         self.setReadOnly(True)
 
-    def keyPressEvent(self, event):
+    def keyPressEvent(self, event): # type: ignore
         key = event.key()
-        if key != Qt.Key_Escape:  # 忽略Escape键
+        if key != Qt.Key_Escape:  # type: ignore # 忽略Escape键
             hex_code = f"0x{key:x}"
             self.setText(hex_code)

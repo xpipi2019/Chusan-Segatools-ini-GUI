@@ -86,7 +86,7 @@ def setup_io_tab(parent, tab):
     # 预设ChuniIO DLL选项
     chuniio_options = [
         ("chuniio", "chuniio.dll"),
-        ("Fish", "chunithm.dll"),
+        ("NicoChuniio", "nicochuniio.dll"),  # New ChuniIO
         ("TASOLLER", "tasoller.dll"),
         ("TASOLLER Plus", "tasoller_plus.dll"),
         ("Brokenithm", "brokenithm.dll"),
@@ -122,6 +122,31 @@ def setup_io_tab(parent, tab):
 
     chuniio_group.setLayout(chuniio_layout)
     layout.addWidget(chuniio_group)
+
+    # NicoChuniio 相关配置项
+    auto_reconnect_group = QGroupBox(
+        Localization.get_text(parent.language, "nicochuniio_settings")
+    )
+    auto_reconnect_layout = QVBoxLayout()
+
+    # 热拔插开关
+    parent.auto_reconnect_checkbox = QCheckBox(
+        Localization.get_text(parent.language, "auto_reconnect")
+    )
+    auto_reconnect_layout.addWidget(parent.auto_reconnect_checkbox)
+
+    # 重连尝试间隔
+    reconnect_interval_label = QLabel(
+        Localization.get_text(parent.language, "reconnect_interval")
+    )
+    parent.reconnect_interval_edit = QLineEdit()
+    reconnect_interval_layout = QHBoxLayout()
+    reconnect_interval_layout.addWidget(reconnect_interval_label)
+    reconnect_interval_layout.addWidget(parent.reconnect_interval_edit)
+    auto_reconnect_layout.addLayout(reconnect_interval_layout)
+
+    auto_reconnect_group.setLayout(auto_reconnect_layout)
+    chuniio_layout.addWidget(auto_reconnect_group)
 
     # 设置初始值
     # AimeIO
@@ -164,6 +189,21 @@ def setup_io_tab(parent, tab):
 
     parent.widgets["chuniio"] = {"path": None, "builtin": chuniio_builtin}
 
+    # Chuniio-Nicochuniio
+    parent.widgets["nico"] = {"autoReconnect": "0", "reconnectInterval": "2000"}
+
+    if "nico" in parent.config:
+        parent.auto_reconnect_checkbox.setChecked(parent.config["nico"].get("autoReconnect", "0") == "1")
+        parent.reconnect_interval_edit.setText(str(parent.config["nico"].get("reconnectInterval", "2000")))
+
+    # ... 现有代码 ...
+    def update_nico_config():
+        parent.widgets["nico"]["autoReconnect"] = "1" if parent.auto_reconnect_checkbox.isChecked() else "0"
+        parent.widgets["nico"]["reconnectInterval"] = parent.reconnect_interval_edit.text()
+
+    parent.auto_reconnect_checkbox.toggled.connect(update_nico_config)
+    parent.reconnect_interval_edit.textChanged.connect(update_nico_config)
+
     def update_aimeio_custom_state():
         custom_enabled = parent.aimeio_radios[-1][0].isChecked()
         parent.aimeio_custom_edit.setEnabled(custom_enabled)
@@ -184,6 +224,19 @@ def setup_io_tab(parent, tab):
             radio.setEnabled(not builtin_enabled)
         chuniio_dll_label.setEnabled(not builtin_enabled)
         update_chuniio_custom_state()
+
+
+    def update_auto_reconnet_state():
+        nico_chuniio_selected = (
+            parent.chuniio_radios[1][0].isChecked() and not chuniio_builtin.isChecked()
+        )
+        auto_reconnect_group.setEnabled(nico_chuniio_selected)
+        
+        if nico_chuniio_selected:
+            if "nico" not in parent.config:
+                parent.auto_reconnect_checkbox.setChecked(True)
+                parent.reconnect_interval_edit.setText("2000")
+                update_nico_config()
 
     def update_aimeio_state():
         aime_virtual_enabled = False
@@ -212,6 +265,9 @@ def setup_io_tab(parent, tab):
     for radio, _ in parent.chuniio_radios:
         radio.toggled.connect(update_chuniio_custom_state)
 
+    for radio, value in parent.chuniio_radios:
+        radio.toggled.connect(update_auto_reconnet_state)
+
     chuniio_builtin.toggled.connect(update_chuniio_radio_state)
 
     if "aime" in parent.widgets and "enable" in parent.widgets["aime"]:
@@ -220,5 +276,7 @@ def setup_io_tab(parent, tab):
     update_aimeio_custom_state()
     update_chuniio_radio_state()
     update_aimeio_state()
+    update_auto_reconnet_state()
+    update_nico_config()
 
     layout.addStretch()
