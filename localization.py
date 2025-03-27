@@ -41,9 +41,6 @@ class Localization:
         "open_folder_dialog": "选择文件夹",
         "open_file_dialog": "选择文件",
         "please_open_config": "请先打开配置文件",
-        "folders_created": "已创建文件夹: {0}",
-        "all_folders_exist": "所有文件夹已存在",
-        "create_folder_error": "创建 {0} 文件夹失败: {1}",
         
         # 设备标签页
         "aime_settings": "Aime 设置",
@@ -55,9 +52,12 @@ class Localization:
         "vfd_settings": "VFD 设置",
         "enable_vfd": "启用 VFD 模拟",
         "vfd_tip": "提示: 使用真实VFD请关闭这个选项，如果你不清楚什么是VFD请不要随意修改这个选项",
+        "create_aime_card": "创建Aime卡",
+        "please_set_aime_path": "请先设置Aime路径",
+        "aime_file_exists": "Aime卡文件已存在",
+        "aime_file_created": "Aime卡文件创建成功",
         "edit_aime_title": "编辑Aime卡号",
-        "edit_aime_desc": "请输入Aime卡号 (通常为20位数字):",
-        "edit_aime_placeholder": "例如: 51073710566476005666",
+        "edit_aime_desc": "请输入Aime卡号 (通常为20位不含空格的数字):",
         "ok": "确定",
         "cancel": "取消",
         "aime_updated": "Aime卡号已更新",
@@ -65,15 +65,16 @@ class Localization:
         "file_not_exist": "文件不存在: {0}",
         
         # 网络标签页
-        "offline": "离线",
+        "localhost": "本地",
         "custom_selecton": "自定义",
         "dns_settings": "DNS 设置",
         "default_server": "默认服务器:",
         "custom_dns": "自定义DNS:",
+        "test_network": "服务器连通性测试",
         "netenv_settings": "网络环境设置",
         "lan_simulation": "局域网模拟",
         "ip_suffix": "IP地址后缀:",
-        "suffix_tip": "提示: 请填入zerotier中设置的后缀",
+        "suffix_tip": "提示: 请填入Zerotier或其它软件中设置的后缀",
         
         # 主板标签页
         "keychip_settings": "Keychip 设置",
@@ -172,9 +173,21 @@ class Localization:
         "online_flag_fixed": "OnlineFlag已成功修复，并创建了备份文件。",
         "warning_title": "警告",
 
+        # NicoChuniio 设置
+        "nicochuniio_settings": "NicoChuniio 设置",
+        "auto_reconnect": "启用热拔插功能",
+        "reconnect_interval": "重连尝试间隔(毫秒):",
+
         
         # 其它
         "TODO_tip": "未完成",
+        "success": "成功",
+        "info": "提示",
+        "warning": "警告",
+        "folders_created": "已创建文件夹: {0}",
+        "all_folders_exist": "所有文件夹已存在",
+        "create_folder_error": "创建 {0} 文件夹失败: {1}",
+        "create_file_failed": "创建文件失败: {0}",
 
         # 语言设置
         "language": "语言(Language):",
@@ -224,10 +237,7 @@ class Localization:
         "open_folder_dialog": "Select Folder",
         "open_file_dialog": "Select File",
         "please_open_config": "Please open a config file first",
-        "folders_created": "Folders created: {0}",
-        "all_folders_exist": "All folders already exist",
-        "create_folder_error": "Failed to create {0} folder: {1}",
-        
+                
         # 设备标签页
         "aime_settings": "Aime Settings",
         "use_virtual_reader": "Use Virtual Reader",
@@ -238,9 +248,12 @@ class Localization:
         "vfd_settings": "VFD Settings",
         "enable_vfd": "Enable VFD Emulation",
         "vfd_tip": "Tip: Disable this option if using real VFD. If you don't know what VFD is, don't modify this option",
+        "create_aime_card": "Create Aime Card",
+        "please_set_aime_path": "Please set Aime path first",
+        "aime_file_exists": "Aime card file already exists",
+        "aime_file_created": "Aime card file created successfully",
         "edit_aime_title": "Edit Aime Card Number",
-        "edit_aime_desc": "Please enter Aime card number (usually 20 digits):",
-        "edit_aime_placeholder": "Example: 51073710566476005666",
+        "edit_aime_desc": "Please enter Aime card number (usually 20 digits wiothout spaces):",
         "ok": "OK",
         "cancel": "Cancel",
         "aime_updated": "Aime card number updated",
@@ -248,15 +261,16 @@ class Localization:
         "file_not_exist": "File does not exist: {0}",
         
         # 网络标签页
-        "offline": "Offline",
+        "localhost": "Localhost",
         "custom_selecton": "CUSTOM",
         "dns_settings": "DNS Settings",
         "default_server": "Default Server:",
         "custom_dns": "Custom DNS:",
+        "test_network": "Network Connectivity Test",
         "netenv_settings": "Network Environment Settings",
         "lan_simulation": "LAN Simulation",
         "ip_suffix": "IP Address Suffix:",
-        "suffix_tip": "Tip: Enter the suffix set in zerotier",
+        "suffix_tip": "Tip: Enter the suffix set in zerotier or other software",
         
         # 主板标签页
         "keychip_settings": "Keychip Settings",
@@ -355,11 +369,21 @@ class Localization:
         "online_flag_fixed": "OnlineFlag has been successfully fixed and a backup file has been created.",
         "warning_title": "Warning",
 
-
+        # NicoChuniio Settings
+        "nicochuniio_settings": "NicoChuniio Settings",
+        "auto_reconnect": "Enable Hot-plug",
+        "reconnect_interval": "Reconnect Interval (ms):",
 
         
         # 其它
         "TODO_tip": "Coming soon",
+        "success": "Success",
+        "info": "Information",
+        "warning": "Warning",
+        "folders_created": "Folders created: {0}",
+        "all_folders_exist": "All folders already exist",
+        "create_folder_error": "Failed to create {0} folder: {1}",
+        "create_file_failed": "Failed to create file: {0}",
         
         # 语言设置
         "language": "Language(语言):",

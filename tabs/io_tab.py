@@ -190,20 +190,19 @@ def setup_io_tab(parent, tab):
     parent.widgets["chuniio"] = {"path": None, "builtin": chuniio_builtin}
 
     # Chuniio-Nicochuniio
-    parent.widgets["nico"] = {"autoReconnect": 0, "reconnectInterval": 1000}
+    parent.widgets["nico"] = {"autoReconnect": "0", "reconnectInterval": "2000"}
 
     if "nico" in parent.config:
-        parent.widgets["nico"]["autoReconnect"] = parent.config["nico"].get(
-            "autoReconnect", 0
-        )
-        parent.widgets["nico"]["reconnectInterval"] = parent.config["nico"].get(
-            "reconnectInterval", 1000
-        )
+        parent.auto_reconnect_checkbox.setChecked(parent.config["nico"].get("autoReconnect", "0") == "1")
+        parent.reconnect_interval_edit.setText(str(parent.config["nico"].get("reconnectInterval", "2000")))
 
-    parent.auto_reconnect_checkbox.setChecked(parent.widgets["nico"]["autoReconnect"])
-    parent.reconnect_interval_edit.setText(
-        str(parent.widgets["nico"]["reconnectInterval"])
-    )
+    # ... 现有代码 ...
+    def update_nico_config():
+        parent.widgets["nico"]["autoReconnect"] = "1" if parent.auto_reconnect_checkbox.isChecked() else "0"
+        parent.widgets["nico"]["reconnectInterval"] = parent.reconnect_interval_edit.text()
+
+    parent.auto_reconnect_checkbox.toggled.connect(update_nico_config)
+    parent.reconnect_interval_edit.textChanged.connect(update_nico_config)
 
     def update_aimeio_custom_state():
         custom_enabled = parent.aimeio_radios[-1][0].isChecked()
@@ -226,11 +225,18 @@ def setup_io_tab(parent, tab):
         chuniio_dll_label.setEnabled(not builtin_enabled)
         update_chuniio_custom_state()
 
+
     def update_auto_reconnet_state():
         nico_chuniio_selected = (
             parent.chuniio_radios[1][0].isChecked() and not chuniio_builtin.isChecked()
         )
         auto_reconnect_group.setEnabled(nico_chuniio_selected)
+        
+        if nico_chuniio_selected:
+            if "nico" not in parent.config:
+                parent.auto_reconnect_checkbox.setChecked(True)
+                parent.reconnect_interval_edit.setText("2000")
+                update_nico_config()
 
     def update_aimeio_state():
         aime_virtual_enabled = False
@@ -271,5 +277,6 @@ def setup_io_tab(parent, tab):
     update_chuniio_radio_state()
     update_aimeio_state()
     update_auto_reconnet_state()
+    update_nico_config()
 
     layout.addStretch()
