@@ -2,7 +2,7 @@ import configparser
 import json
 import os
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt,pyqtSignal
 from PyQt5.QtWidgets import (
     QCheckBox,
     QComboBox,
@@ -32,10 +32,11 @@ from utils import create_scrollable_layout
 
 
 class ConfigEditor(QMainWindow):
+    config_loaded = pyqtSignal()
     def __init__(self, language="zh_CN"):
         super().__init__()
 
-        self.version = "0.2a"
+        self.version = "0.3"
         self.language = language
 
         self.setWindowTitle(
@@ -159,6 +160,7 @@ class ConfigEditor(QMainWindow):
                     Localization.get_text(self.language, "error"),
                     Localization.get_text(self.language, "cannot_read_config", str(e)),
                 )
+        self.config_loaded.emit()
 
     def save_config(self):
         if not self.current_file:
@@ -168,7 +170,6 @@ class ConfigEditor(QMainWindow):
         try:
             if os.path.exists(self.current_file):
                 import shutil
-
                 shutil.copy2(self.current_file, backup_file)
         except Exception as e:
             QMessageBox.warning(
@@ -184,6 +185,7 @@ class ConfigEditor(QMainWindow):
                 # 如果有原始内容，尝试保留注释
                 if self.original_content:
                     new_content = []
+                    processed_sections = set()
                     section = None
 
                     for line in self.original_content:
@@ -192,6 +194,7 @@ class ConfigEditor(QMainWindow):
                         if line.startswith("[") and line.endswith("]"):
                             section = line[1:-1]
                             new_content.append(line)
+                            processed_sections.add(section)
 
                             if section in self.config:
                                 for key, value in self.config[section].items():
@@ -200,6 +203,14 @@ class ConfigEditor(QMainWindow):
                         # 如果不是节标题也不是键值对，保留原始行（注释等）
                         elif not ("=" in line and not line.lstrip().startswith(";")):
                             new_content.append(line)
+                    
+                    # 添加未处理的节
+                    for section in self.config.sections():
+                        if section not in processed_sections:
+                            new_content.append("")  # 添加空行分隔
+                            new_content.append(f"[{section}]")
+                            for key, value in self.config[section].items():
+                                new_content.append(f"{key}={value}")
 
                     f.write("\n".join(new_content))
                 else:
@@ -408,6 +419,24 @@ class ConfigEditor(QMainWindow):
 
             if selected_chuniio:
                 self.config["chuniio"]["path"] = selected_chuniio
+
+        # NicoChuniio 配置
+        nico_selected = False
+        for radio, value in self.chuniio_radios:
+            if radio.isChecked() and value == "nicochuniio.dll":
+                nico_selected = True
+                break
+
+        if nico_selected and not chuniio_builtin:
+            if "nico" not in self.config:
+                self.config["nico"] = {}
+            
+            if "nico" in self.widgets:
+                self.config["nico"]["autoReconnect"] = self.widgets["nico"]["autoReconnect"]
+                self.config["nico"]["reconnectInterval"] = self.widgets["nico"]["reconnectInterval"]
+        else:
+            if "nico" in self.config:
+                del self.config["nico"]
 
         if "io3" not in self.config:
             self.config["io3"] = {}

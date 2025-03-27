@@ -6,7 +6,9 @@ from PyQt5.QtWidgets import (
     QLineEdit,
     QPushButton,
     QVBoxLayout,
+    QMessageBox,
 )
+import os
 
 from localization import Localization
 from utils import (
@@ -15,6 +17,76 @@ from utils import (
     edit_aime_card,
     update_aime_edit_button_state,
 )
+
+# 创建Aime卡
+def create_aime_card(parent, aime_path, current_file):
+    if not current_file:
+        QMessageBox.warning(
+            parent,
+            Localization.get_text(parent.language, "warning"),
+            Localization.get_text(parent.language, "please_open_config"),
+        )
+        return False
+        
+    if not aime_path:
+        QMessageBox.warning(
+            parent,
+            Localization.get_text(parent.language, "warning"),
+            Localization.get_text(parent.language, "please_set_aime_path"),
+        )
+        return False
+        
+    config_dir = os.path.dirname(os.path.abspath(current_file))
+    
+    # 创建device目录（如果不存在）
+    device_dir = os.path.join(config_dir, "DEVICE")
+    if not os.path.exists(device_dir):
+        try:
+            os.makedirs(device_dir)
+        except Exception as e:
+            QMessageBox.critical(
+                parent,
+                Localization.get_text(parent.language, "error"),
+                Localization.get_text(parent.language, "create_folder_error").format(str(e)),
+            )
+            return False
+    
+    # 创建aime.txt
+    aime_file = os.path.join(device_dir, "aime.txt")
+    if os.path.exists(aime_file):
+        QMessageBox.information(
+            parent,
+            Localization.get_text(parent.language, "info"),
+            Localization.get_text(parent.language, "aime_file_exists"),
+        )
+        return False
+        
+    try:
+        with open(aime_file, "w", encoding="utf-8") as f:
+            f.write("")
+        
+        QMessageBox.information(
+            parent,
+            Localization.get_text(parent.language, "success"),
+            Localization.get_text(parent.language, "aime_file_created"),
+        )
+        return True
+    except Exception as e:
+        QMessageBox.critical(
+            parent,
+            Localization.get_text(parent.language, "error"),
+            Localization.get_text(parent.language, "create_file_failed").format(str(e)),
+        )
+        return False
+
+
+def check_aime_file_exists(current_file):
+    if not current_file:
+        return False
+        
+    config_dir = os.path.dirname(os.path.abspath(current_file))
+    aime_file = os.path.join(config_dir, "DEVICE", "aime.txt")
+    return os.path.exists(aime_file)
 
 
 def setup_device_tab(parent, tab):
@@ -44,6 +116,15 @@ def setup_device_tab(parent, tab):
     aime_path_tip = QLabel(Localization.get_text(parent.language, "path_tip"))
     aime_path_tip.setStyleSheet("color: blue;")
     aime_layout.addWidget(aime_path_tip)
+
+    # 创建Aime卡按钮
+    aime_create_btn = QPushButton(
+        Localization.get_text(parent.language, "create_aime_card")
+    )
+    aime_create_btn.clicked.connect(
+        lambda: create_aime_card(parent, aime_path_edit.text(), parent.current_file) and update_aime_buttons_state()
+    )
+    aime_layout.addWidget(aime_create_btn)
 
     # 编辑卡号按钮
     aime_edit_btn = QPushButton(
@@ -102,24 +183,25 @@ def setup_device_tab(parent, tab):
 
     parent.widgets["vfd"] = {"enable": vfd_enable}
 
-    def update_aime_path_state():
+    def update_aime_buttons_state():
         enabled = aime_enable.isChecked()
         aime_path_edit.setEnabled(enabled)
         aime_path_browse.setEnabled(enabled)
         aime_path_tip.setEnabled(enabled)
-        aime_edit_btn.setEnabled(enabled)
-
-        # 检查文件是否存在
+        
         if enabled:
+            aime_file_exists = check_aime_file_exists(parent.current_file)
+            aime_create_btn.setEnabled(enabled and not aime_file_exists)
             update_aime_edit_button_state(parent, aime_path_edit.text(), aime_edit_btn)
+        else:
+            aime_create_btn.setEnabled(False)
+            aime_edit_btn.setEnabled(False)
 
-    aime_enable.toggled.connect(update_aime_path_state)
-    aime_path_edit.textChanged.connect(
-        lambda: update_aime_edit_button_state(
-            parent, aime_path_edit.text(), aime_edit_btn
-        )
-    )
+    aime_enable.toggled.connect(update_aime_buttons_state)
+    aime_path_edit.textChanged.connect(update_aime_buttons_state)
+    
+    parent.config_loaded.connect(update_aime_buttons_state)
 
-    update_aime_path_state()
+    update_aime_buttons_state()
 
     layout.addStretch()
