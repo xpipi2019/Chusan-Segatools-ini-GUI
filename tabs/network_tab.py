@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import (
+from PyQt6.QtWidgets import (
     QButtonGroup,
     QCheckBox,
     QGroupBox,
@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import (
     QSpinBox,
     QVBoxLayout,
 )
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt6.QtCore import QThread, pyqtSignal
 import subprocess
 import platform
 

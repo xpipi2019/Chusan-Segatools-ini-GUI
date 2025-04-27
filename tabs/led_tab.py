@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QCheckBox, QGroupBox, QLabel, QVBoxLayout
+from PyQt6.QtWidgets import QCheckBox, QGroupBox, QLabel, QVBoxLayout
 
 from localization import Localization
 from utils import create_scrollable_layout

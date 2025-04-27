@@ -2,7 +2,7 @@ import json
 import os
 import re
 
-from PyQt5.QtWidgets import (
+from PyQt6.QtWidgets import (
     QFileDialog,
     QGroupBox,
     QHBoxLayout,

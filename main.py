@@ -2,7 +2,7 @@ import json
 import os
 import sys
 
-from PyQt5.QtWidgets import QApplication
+from PyQt6.QtWidgets import QApplication
 
 from config_editor import ConfigEditor
 
@@ -26,7 +26,7 @@ def main():
     settings = load_settings()
     editor = ConfigEditor(settings.get("language", "zh_CN"))
     editor.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
 
 
 if __name__ == "__main__":

@@ -2,8 +2,8 @@ import configparser
 import json
 import os
 
-from PyQt5.QtCore import Qt,pyqtSignal
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import Qt,pyqtSignal
+from PyQt6.QtWidgets import (
     QCheckBox,
     QComboBox,
     QFileDialog,
